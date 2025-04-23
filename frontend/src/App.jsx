@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import WeaponCard from "./WeaponCard";
 
-const socket = io("http://localhost:5001"); // 👈 asegúrate que este es tu puerto del backend
+const socket = io(import.meta.env.VITE_BACKEND_URL); // 👈 asegúrate que este es tu puerto del backend
 
 function App() {
   const [weapons, setWeapons] = useState([]);

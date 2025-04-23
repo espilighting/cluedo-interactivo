@@ -1,0 +1,26 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "build": "vite build",
+    "serve": "vite preview",
+    "start-backend": "cd ../backend && npm start",
+    "start-frontend": "vite"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.0.0",
+    "concurrently": "^9.1.2",
+    "postcss": "^8.0.0",
+    "tailwindcss": "^3.0.0",
+    "vite": "^4.0.0"
+  }
+}

@@ -2,23 +2,35 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import WeaponCard from "./WeaponCard"; // Asegúrate de tener este componente
 import instruccionesImg from "./assets/instrucciones.png"; // Cambia esta ruta si tu imagen está en otra carpeta
+import AssassinVote from "./components/AssassinVote"; // Importa el componente de votación del asesino
 
 const socket = io("http://localhost:5001"); // ⚠️ Cambia esta URL si estás en producción
 
 function App() {
   const [weapons, setWeapons] = useState([]);         // Lista de armas
-  const [gameStarted, setGameStarted] = useState(false); // Si el juego ha empezado
+  const [gameStarted, setGameStarted] = useState(false); // Si el juego ha comenzado
   const [showInstructions, setShowInstructions] = useState(false); // Si las instrucciones deben mostrarse
 
   useEffect(() => {
-    // Comprobar el LocalStorage para saber si el juego ya ha comenzado
+    // Recuperar el estado del juego desde localStorage
     const storedGameStarted = localStorage.getItem("gameStarted") === "true";
     setGameStarted(storedGameStarted);
+
+    // Recuperar las armas reveladas desde localStorage
+    const storedWeapons = JSON.parse(localStorage.getItem("weapons"));
+    if (storedWeapons) {
+      setWeapons(storedWeapons);
+    }
+
+    // Recuperar las instrucciones mostradas desde localStorage
+    const storedInstructions = localStorage.getItem("showInstructions") === "true";
+    setShowInstructions(storedInstructions);
 
     // Recibe el estado actual de las armas desde el backend
     socket.on("weapons", (data) => {
       console.log("Datos de armas recibidos: ", data); // Verifica que los datos de las armas estén llegando correctamente
       setWeapons(data);  // Actualizamos el estado con las armas
+      localStorage.setItem("weapons", JSON.stringify(data)); // Guardamos las armas en localStorage
     });
 
     // Escucha el evento que inicia el juego
@@ -32,12 +44,14 @@ function App() {
       setGameStarted(false);
       localStorage.setItem("gameStarted", "false"); // Reinicia el estado del juego
       setWeapons([]);  // Reinicia las armas
+      localStorage.setItem("weapons", JSON.stringify([])); // Borra las armas de localStorage
     });
 
     // Escucha el evento de mostrar instrucciones
     socket.on("show-instructions", (data) => {
       if (data.show) {
         setShowInstructions(true); // Mostrar instrucciones
+        localStorage.setItem("showInstructions", "true"); // Guardamos que se han mostrado instrucciones
       }
     });
 
@@ -95,6 +109,9 @@ function App() {
                 <WeaponCard key={weapon.name} name={weapon.name} revealed={weapon.revealed} />
               ))}
           </div>
+
+          {/* Votación del asesino */}
+          <AssassinVote />
         </div>
       )}
     </div>
